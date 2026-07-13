@@ -1,12 +1,24 @@
+
+export interface RegisterUserPayload {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    avatar: string;
+
+}
+
+/**
+
 model User {
-  id            String      @id @default(uuid())
+  id            String      @id @default(cuid())
 
   name          String
   email         String      @unique
   phone         String?     @unique
   password      String
 
-  role          UserRole @default(CUSTOMER)
+  role          UserRole
   status        UserStatus  @default(ACTIVE)
 
   avatar        String?
@@ -27,3 +39,6 @@ model User {
 
   @@map("users")
 }
+
+ * 
+*/

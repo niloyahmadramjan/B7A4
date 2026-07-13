@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
-import { authService } from "./auth.service";
+import { sendResponse } from "../../utils/sentResponse";
+import {status} from "http-status";
 
-const registerUser = (req: Request, res: Response) => {
-  const payload = "user";
-  const data = authService.userRegisterService(payload);
-  res.status(200).json({
-    data: data,
-  });
-};
+
 
 export const authController = {
-  registerUser,
+  
 };
