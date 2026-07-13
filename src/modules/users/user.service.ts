@@ -25,6 +25,9 @@ const userRegisterService = async (payload: RegisterUserPayload) => {
       avatar,
       phone,
     },
+    omit: {
+        password: true
+    }
   });
 
   return createUser;
