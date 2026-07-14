@@ -1,13 +1,41 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import Jwt, { SignOptions } from "jsonwebtoken";
+import { SignOptions } from "jsonwebtoken";
 import config from "../../config";
 import { jwtUtils } from "../../utils/jwt";
+import { RegisterUserPayload, UserLoginInfo } from "./userInterface";
 
-interface UserLoginInfo {
-  email: string;
-  password: string;
-}
+
+
+const userRegisterService = async (payload: RegisterUserPayload) => {
+  const { name, email, password, phone, avatar } = payload;
+  const isUserExist = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (isUserExist) {
+    throw new Error("User already exists");
+  }
+
+  const hastPass = await bcrypt.hash(
+    password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  const createUser = await prisma.user.create({
+    data: {
+      name,
+      email,
+      password: hastPass,
+      avatar,
+      phone,
+    },
+    omit: {
+      password: true,
+    },
+  });
+
+  return createUser;
+};
 
 const userLoginService = async (payload: UserLoginInfo) => {
   const { email, password } = payload;
@@ -54,4 +82,5 @@ const userLoginService = async (payload: UserLoginInfo) => {
 
 export const authService = {
   userLoginService,
+  userRegisterService,
 };

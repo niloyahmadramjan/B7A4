@@ -2,7 +2,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import config from "./config";
-import { userRouters } from "./modules/user/user.route";
 import { authRouters } from "./modules/auth/auth.route";
 
 
@@ -22,8 +21,7 @@ app.get("/",(req : Request, res : Response) => {
     res.send("Fixit-now server is running...");
 });
 
-// Authentication 
-app.use("/api/user", userRouters)
+// Auth
 app.use("/api/auth", authRouters)
 
 

@@ -2,8 +2,21 @@ import { Request, Response } from "express";
 import { sendResponse } from "../../utils/sentResponse";
 import { status } from "http-status";
 import { authService } from "./auth.service";
+import { catchAsync } from "../../utils/catchAsynce";
 
-const userLogin = async (req: Request, res: Response) => {
+
+const registerUser = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const result = await authService.userRegisterService(payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.CREATED,
+    message: "User registration successfully",
+    data: result,
+  });
+});
+
+const userLogin = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const { refreshToken, accessToken } =
     await authService.userLoginService(payload);
@@ -28,8 +41,11 @@ const userLogin = async (req: Request, res: Response) => {
     message: "Successfully Login !",
     data: { accessToken, refreshToken },
   });
-};
+});
+
+
 
 export const authController = {
   userLogin,
+  registerUser
 };
