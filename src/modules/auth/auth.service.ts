@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import Jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import Jwt, { SignOptions } from "jsonwebtoken";
 import config from "../../config";
+import { jwtUtils } from "../../utils/jwt";
 
 interface UserLoginInfo {
   email: string;
@@ -33,13 +34,17 @@ const userLoginService = async (payload: UserLoginInfo) => {
     role: user.role,
   };
 
-  const accessToken = Jwt.sign(jwtPayload, config.jwt_access_secret, {
-    expiresIn: config.jwt_access_expires_in,
-  } as SignOptions);
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_access_secret,
+    config.jwt_access_expires_in as SignOptions,
+  );
 
-  const refreshToken = Jwt.sign(jwtPayload, config.jwt_refresh_secret, {
-    expiresIn: config.jwt_refresh_expires_in,
-  } as SignOptions);
+  const refreshToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_refresh_secret,
+    config.jwt_refresh_expires_in as SignOptions,
+  );
 
   return {
     accessToken,
