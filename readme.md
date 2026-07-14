@@ -55,3 +55,37 @@ POST /api/services
 "price":500,
 "estimatedHours":3
 }
+
+
+technician data get
+
+GET /api/technicians
+
+Search:
+
+GET /api/technicians?searchTerm=rahim
+
+Location:
+
+GET /api/technicians?location=Dhaka
+
+Minimum rating:
+
+GET /api/technicians?minRating=4
+
+Hourly rate range:
+
+GET /api/technicians?minRate=300&maxRate=1000
+
+Available technicians:
+
+GET /api/technicians?isAvailable=true
+
+Sorting:
+
+GET /api/technicians?sortBy=averageRating&sortOrder=desc
+
+Combined:
+
+GET /api/technicians?location=Dhaka&minRating=4&minRate=500&maxRate=1000&page=1&limit=10&sortBy=averageRating&sortOrder=desc
+

@@ -5,6 +5,7 @@ import config from "./config";
 import { authRouters } from "./modules/auth/auth.route";
 import { serviceRouter } from "./modules/services/services.route";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import { technicianRouter } from "./modules/technicians/technicians.route";
 
 
 const app : Application = express();
@@ -27,8 +28,8 @@ app.get("/",(req : Request, res : Response) => {
 app.use("/api/auth", authRouters)
 
 //Services & 367Technicians (Public)
-
 app.use("/api/services", serviceRouter)
+app.use("/api/technicians", technicianRouter)
 
 app.use(globalErrorHandler)
 
