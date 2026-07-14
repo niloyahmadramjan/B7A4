@@ -4,6 +4,18 @@ import { servicesService } from "./services.service";
 import { sendResponse } from "../../utils/sentResponse";
 import status from "http-status";
 
+const createService = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+
+  const result = await servicesService.createService(payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Get service data successfully",
+    data: { result },
+  });
+});
+
 const getAllServices = catchAsync(async (req: Request, res: Response) => {
   const query = req.query;
 
@@ -18,5 +30,6 @@ const getAllServices = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const serviceController = {
+  createService,
   getAllServices,
 };

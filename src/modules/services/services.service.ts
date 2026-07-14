@@ -6,33 +6,78 @@ GET	/api/services	Get all services with filters (type, location, rating)
 
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { ICreateService, IServiceQuery } from "./service.interface";
 
-export interface IServiceQuery {
-  page?: string;
+const createService = async (payload: ICreateService) => {
+  const {
+    technicianId,
+    categoryId,
+    title,
+    description,
+    price,
+    estimatedHours,
+  } = payload;
 
-  limit?: string;
+  // check technician exists
 
-  searchTerm?: string;
+  const technician = await prisma.technicianProfile.findUnique({
+    where: {
+      id: technicianId,
+    },
+  });
 
-  title?: string;
+  if (!technician) {
+    throw new Error("Technician not found");
+  }
 
-  categoryId?: string;
+  // check category exists
 
-  technicianId?: string;
+  const category = await prisma.category.findUnique({
+    where: {
+      id: categoryId,
+    },
+  });
 
-  minPrice?: string;
+  if (!category) {
+    throw new Error("Category not found");
+  }
 
-  maxPrice?: string;
+  const service = await prisma.service.create({
+    data: {
+      technicianId,
 
-  estimatedHours?: string;
+      categoryId,
 
-  isActive?: string;
+      title,
 
-  sortBy?: keyof Prisma.ServiceOrderByWithRelationInput;
+      description,
 
-  sortOrder?: "asc" | "desc";
-}
+      price,
 
+      estimatedHours,
+    },
+
+    include: {
+      category: true,
+
+      technician: {
+        include: {
+          user: {
+            select: {
+              id: true,
+
+              name: true,
+
+              phone: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return service;
+};
 const getAllServices = async (query: IServiceQuery) => {
   const limit = query.limit ? Number(query.limit) : 10;
 
@@ -176,5 +221,6 @@ const getAllServices = async (query: IServiceQuery) => {
 };
 
 export const servicesService = {
+  createService,
   getAllServices,
 };

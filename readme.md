@@ -42,3 +42,17 @@ Pagination
 GET /api/services?page=2&limit=20
 Sorting
 GET /api/services?sortBy=price&sortOrder=asc
+
+
+Request Body Example
+
+POST /api/services
+
+{
+    "technicianId":"cmx123456",
+    "categoryId":"cmx789123",
+    "title":"AC Repair Service",
+    "description":"Complete AC servicing and repair",
+    "price":500,
+    "estimatedHours":3
+}

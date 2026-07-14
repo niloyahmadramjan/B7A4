@@ -9,5 +9,10 @@ router.get(
   auth("ADMIN", "CUSTOMER", "TECHNICIAN"),
   serviceController.getAllServices,
 );
+router.post(
+  "/",
+  auth("ADMIN", "CUSTOMER", "TECHNICIAN"),
+  serviceController.createService,
+);
 
 export const serviceRouter = router;
