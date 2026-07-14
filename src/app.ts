@@ -6,6 +6,7 @@ import { authRouters } from "./modules/auth/auth.route";
 import { serviceRouter } from "./modules/services/services.route";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { technicianRouter } from "./modules/technicians/technicians.route";
+import { categoriesRouter } from "./modules/category/category.route";
 
 
 const app : Application = express();
@@ -30,6 +31,7 @@ app.use("/api/auth", authRouters)
 //Services & 367Technicians (Public)
 app.use("/api/services", serviceRouter)
 app.use("/api/technicians", technicianRouter)
+app.use("/api/categories", categoriesRouter)
 
 app.use(globalErrorHandler)
 

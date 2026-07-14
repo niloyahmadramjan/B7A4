@@ -56,7 +56,6 @@ POST /api/services
 "estimatedHours":3
 }
 
-
 technician data get
 
 GET /api/technicians
@@ -88,4 +87,12 @@ GET /api/technicians?sortBy=averageRating&sortOrder=desc
 Combined:
 
 GET /api/technicians?location=Dhaka&minRating=4&minRate=500&maxRate=1000&page=1&limit=10&sortBy=averageRating&sortOrder=desc
+
+get technician data by id
+http://localhost:5000/api/technicians/4021c1f1-f2d8-4629-b006-0110697c82e1
+
+
+for get the all cetegories
+
+GET http://localhost:5000/api/categories
 
