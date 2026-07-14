@@ -4,7 +4,6 @@ import { status } from "http-status";
 import { authService } from "./auth.service";
 import { catchAsync } from "../../utils/catchAsynce";
 
-
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const result = await authService.userRegisterService(payload);
@@ -43,9 +42,20 @@ const userLogin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMe = catchAsync(async (req: Request, res: Response) => {
+  const id = req.user?.id;
+  const result = await authService.geMeService(id!);
 
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "user data get successfully",
+    data: { result },
+  });
+});
 
 export const authController = {
   userLogin,
-  registerUser
+  registerUser,
+  getMe
 };

@@ -5,8 +5,6 @@ import config from "../../config";
 import { jwtUtils } from "../../utils/jwt";
 import { RegisterUserPayload, UserLoginInfo } from "./userInterface";
 
-
-
 const userRegisterService = async (payload: RegisterUserPayload) => {
   const { name, email, password, phone, avatar } = payload;
   const isUserExist = await prisma.user.findUnique({
@@ -80,7 +78,25 @@ const userLoginService = async (payload: UserLoginInfo) => {
   };
 };
 
+const geMeService = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    omit: {
+      password: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("user not find!");
+  }
+
+  return user;
+};
+
 export const authService = {
   userLoginService,
   userRegisterService,
+  geMeService,
 };

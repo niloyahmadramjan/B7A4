@@ -54,6 +54,7 @@ export const auth = (...requiredRoles: UserRole[]) => {
     if (!user) {
       throw new Error("User not found. Please log in again");
     }
+    console.log(email, name, id, role, "user decoded data");
 
     req.user = {
       email,
@@ -61,5 +62,6 @@ export const auth = (...requiredRoles: UserRole[]) => {
       id,
       role,
     };
+    next();
   });
 };
