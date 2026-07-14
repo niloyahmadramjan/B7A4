@@ -3,6 +3,7 @@ import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import config from "./config";
 import { authRouters } from "./modules/auth/auth.route";
+import { serviceRouter } from "./modules/services/services.route";
 
 
 const app : Application = express();
@@ -23,6 +24,10 @@ app.get("/",(req : Request, res : Response) => {
 
 // Auth
 app.use("/api/auth", authRouters)
+
+//Services & 367Technicians (Public)
+
+app.use("/api/services", serviceRouter)
 
 
 export default app;
