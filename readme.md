@@ -5,8 +5,9 @@ body json data
 ```json
 {
   "name": "Ramjan",
-  "email": "ramjan@gmail.com",
-  "password": "ramjan@gmail.com",
+  "email": "technician@gmail.com",
+  "password": "technician@gmail.com",
+  "role": "TECHNICIAN",
   "phone": "01812097488",
   "avatar": "https://yourphoto.com"
 }
@@ -26,8 +27,7 @@ for get user data
 req method get http://localhost:5000/api/auth/me
 must be login no require headers body data required cookie accesstoken
 
-
-// for get the all service 
+// for get the all service
 
 API Example
 Search
@@ -43,16 +43,15 @@ GET /api/services?page=2&limit=20
 Sorting
 GET /api/services?sortBy=price&sortOrder=asc
 
-
 Request Body Example
 
 POST /api/services
 
 {
-    "technicianId":"cmx123456",
-    "categoryId":"cmx789123",
-    "title":"AC Repair Service",
-    "description":"Complete AC servicing and repair",
-    "price":500,
-    "estimatedHours":3
+"technicianId":"cmx123456",
+"categoryId":"cmx789123",
+"title":"AC Repair Service",
+"description":"Complete AC servicing and repair",
+"price":500,
+"estimatedHours":3
 }

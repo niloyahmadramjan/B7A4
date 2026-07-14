@@ -4,6 +4,7 @@ import express, { Application, Request, Response } from "express";
 import config from "./config";
 import { authRouters } from "./modules/auth/auth.route";
 import { serviceRouter } from "./modules/services/services.route";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
 
 
 const app : Application = express();
@@ -28,6 +29,8 @@ app.use("/api/auth", authRouters)
 //Services & 367Technicians (Public)
 
 app.use("/api/services", serviceRouter)
+
+app.use(globalErrorHandler)
 
 
 export default app;

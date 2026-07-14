@@ -6,8 +6,9 @@ import status from "http-status";
 
 const createService = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
+  const id = req.user?.id;
 
-  const result = await servicesService.createService(payload);
+  const result = await servicesService.createService(payload, id!);
   sendResponse(res, {
     success: true,
     statusCode: status.OK,

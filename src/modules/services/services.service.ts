@@ -8,21 +8,14 @@ import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { ICreateService, IServiceQuery } from "./service.interface";
 
-const createService = async (payload: ICreateService) => {
-  const {
-    technicianId,
-    categoryId,
-    title,
-    description,
-    price,
-    estimatedHours,
-  } = payload;
+const createService = async (payload: ICreateService, id: string) => {
+  const { categoryId, title, description, price, estimatedHours } = payload;
 
   // check technician exists
 
-  const technician = await prisma.technicianProfile.findUnique({
+  const technician = await prisma.user.findUnique({
     where: {
-      id: technicianId,
+      id: id,
     },
   });
 
@@ -44,7 +37,7 @@ const createService = async (payload: ICreateService) => {
 
   const service = await prisma.service.create({
     data: {
-      technicianId,
+      technicianId: id,
 
       categoryId,
 
