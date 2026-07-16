@@ -3,7 +3,7 @@ import { catchAsync } from "../utils/catchAsynce";
 import { jwtUtils } from "../utils/jwt";
 import config from "../config";
 import { JwtPayload } from "jsonwebtoken";
-import { UserRole } from "../../generated/prisma/enums";
+import { Role } from "../../generated/prisma/enums";
 import { prisma } from "../lib/prisma";
 
 declare global {
@@ -13,12 +13,12 @@ declare global {
         email: string;
         name: string;
         id: string;
-        role: UserRole;
+        role: Role;
       };
     }
   }
 }
-export const auth = (...requiredRoles: UserRole[]) => {
+export const auth = (...requiredRoles: Role[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // get the token from cookies and headers
     const token = req.cookies.accessToken

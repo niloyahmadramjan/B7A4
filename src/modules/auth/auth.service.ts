@@ -1,104 +1,146 @@
-import bcrypt from "bcryptjs";
-import { prisma } from "../../lib/prisma";
-import { SignOptions } from "jsonwebtoken";
-import config from "../../config";
-import { jwtUtils } from "../../utils/jwt";
-import { RegisterUserPayload, UserLoginInfo } from "./userInterface";
-import { UserRole } from "../../../generated/prisma/enums";
+import { ref } from "node:process"
+import config from "../../config"
+import { prisma } from "../../lib/prisma"
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken"
+import { Role } from "../../../generated/prisma/enums"
+import { ILogin, RegisterUserPayload } from "./userInterface"
+import bcrypt from "bcryptjs"
+import { jwtUtils } from "../../utils/jwt"
+const userRegisterInDB = async (payload: RegisterUserPayload) => {
+    const { name, email, password, phone, role } = payload;
 
-const userRegisterService = async (payload: RegisterUserPayload) => {
-  const { name, email, password, phone, avatar, role } = payload;
-  const isUserExist = await prisma.user.findUnique({
-    where: { email },
-  });
-  if (isUserExist) {
-    throw new Error("User already exists");
-  }
+    const isUserExist = await prisma.user.findUnique({
+        where: { email },
+    });
 
-  const hastPass = await bcrypt.hash(
-    password,
-    Number(config.bcrypt_salt_rounds),
-  );
+    if (isUserExist) {
+        throw new Error("User already exists");
+    }
 
-  const createUser = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hastPass,
-      avatar,
-      phone,
-      role: role ?? UserRole.CUSTOMER,
-    },
-    omit: {
-      password: true,
-    },
-  });
+    const hashedPassword = await bcrypt.hash(
+        password,
+        Number(config.bcrypt_salt_rounds)
+    );
 
-  return createUser;
+
+    const result = await prisma.$transaction(async (tex) => {
+        const createdUser = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                phone,
+                role: role || Role.CUSTOMER,
+            },
+
+        });
+        if (createdUser.role === "TECHNICIAN") {
+            await tex.technicianProfile.create({
+                data: {
+                    userId: createdUser.id,
+                    bio: "",
+                    experience: 0,
+                    location: "",
+                }
+            })
+        }
+        return await tex.user.findUnique({
+            where: { id: createdUser.id },
+            omit: {
+                password: true,
+            },
+            include: {
+                technicianProfile: true,
+            },
+        });
+    })
+
+    return result 
+
 };
 
-const userLoginService = async (payload: UserLoginInfo) => {
-  const { email, password } = payload;
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+const userLoginInDB = async (payload: ILogin) => {
+    const { email, password } = payload
+    const user = await prisma.user.findUniqueOrThrow({
+        where: { email }
+    })
 
-  if (!user) {
-    throw new Error("Oops Invalid user crediantial!");
-  }
+    const IsPasswordMatch = await bcrypt.compare(password, user.password)
+    if (!IsPasswordMatch) {
+        throw new Error("Password is Incorrected")
+    }
 
-  const isMatchPass = await bcrypt.compare(password, user.password);
-  if (!isMatchPass) {
-    throw new Error("Oops Invalid user crediantial!");
-  }
 
-  // create the access token and refresh token
-  const jwtPayload = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  };
+    const jwtPayload = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    }
 
-  const accessToken = jwtUtils.createToken(
-    jwtPayload,
-    config.jwt_access_secret,
-    config.jwt_access_expires_in as SignOptions,
-  );
+    const accessToken = await jwtUtils.createToken(jwtPayload, config.jwt_access_secret, config.jwt_access_expires_in as SignOptions)
+    const refreshToken = await jwtUtils.createToken(jwtPayload, config.jwt_refresh_secret, config.jwt_refresh_expires_in as SignOptions)
+    return {
+        accessToken,
+        refreshToken
+    }
+}
 
-  const refreshToken = jwtUtils.createToken(
-    jwtPayload,
-    config.jwt_refresh_secret,
-    config.jwt_refresh_expires_in as SignOptions,
-  );
 
-  return {
-    accessToken,
-    refreshToken,
-  };
-};
 
-const geMeService = async (id: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-    omit: {
-      password: true,
-    },
-  });
 
-  if (!user) {
-    throw new Error("user not find!");
-  }
+const refreshTokenSave = async (token: string) => {
+    const veryToken = await jwtUtils.verifyToken(token, config.jwt_refresh_secret)
+    if (!veryToken.success) {
+        throw new Error("Token is not valied")
+    }
 
-  return user;
-};
+    const { id } = veryToken.data as JwtPayload
 
+    const user = await prisma.user.findUniqueOrThrow({
+        where: { id }
+    })
+
+    const jwtPayload = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+    }
+
+    const accessToken = await jwtUtils.createToken(jwtPayload, config.jwt_access_secret, config.jwt_access_expires_in as SignOptions)
+    return {
+        accessToken
+    }
+
+}
+
+
+const getCurrentLoginUser = async (userId: string) => {
+
+    const user = await prisma.user.findFirstOrThrow({
+        where: {
+            id: userId
+        },
+        include: {
+            technicianProfile: true,
+            bookingsAsCustomer: true,
+            reviews: true
+        }
+
+    })
+    if (user.role === Role.TECHNICIAN) {
+        return user;
+
+    }
+
+    const { technicianProfile, ...rest } = user;
+    return rest;
+
+}
 export const authService = {
-  userLoginService,
-  userRegisterService,
-  geMeService,
-};
+    userRegisterInDB,
+    userLoginInDB,
+    refreshTokenSave,
+    getCurrentLoginUser
+}

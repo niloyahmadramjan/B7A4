@@ -2,7 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import config from "./config";
-import { authRouters } from "./modules/auth/auth.route";
+import { authRouter } from "./modules/auth/auth.route";
 import { serviceRouter } from "./modules/services/services.route";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { technicianRouter } from "./modules/technicians/technicians.route";
@@ -36,7 +36,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Auth
-app.use("/api/auth", authRouters);
+app.use("/api/auth", authRouter);
 
 //Services & 367Technicians (Public)
 app.use("/api/services", serviceRouter);
