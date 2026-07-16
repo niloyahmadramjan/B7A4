@@ -36,22 +36,14 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Fixit-now server is running...");
 });
 
-// Auth
 app.use("/api/auth", authRouter);
-
-//Services & 367Technicians (Public)
-app.use("/api/services", serviceRouter);
-app.use("/api/technicians", technicianRouter);
 app.use("/api/categories", categoryRouter);
-
-// Bookings
+app.use("/api/technician", technicianRouter);
+app.use("/api/services", serviceRouter);
+// app.use("/api/admin", adminRouter)
 app.use("/api/bookings", bookingRouter);
-
-// payment
 app.use("/api/payments", paymentRouter);
-
-// review 
-app.use("/api/reviews", reviewRouter)
+app.use("/api/reviews", reviewRouter);
 
 app.use(globalErrorHandler);
 app.use(notFound);
