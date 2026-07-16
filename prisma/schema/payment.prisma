@@ -1,6 +1,6 @@
 model Payment {
 
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   bookingId String @unique
 
@@ -8,7 +8,7 @@ model Payment {
 
   amount Float
 
-  transactionId String @unique
+  transactionId String? @unique
 
   paymentIntentId String?
 

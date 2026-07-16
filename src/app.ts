@@ -8,13 +8,24 @@ import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { technicianRouter } from "./modules/technicians/technicians.route";
 import { categoriesRouter } from "./modules/category/category.route";
 import { bookingRouter } from "./modules/bookings/bookings.route";
+import { paymentRouter } from "./modules/payments/payments.route";
 
 const app: Application = express();
+
+
+
 
 app.use(
   cors({
     origin: config.app_url,
     credentials: true,
+  }),
+);
+
+app.use(
+  "/api/payments/confirm",
+  express.raw({
+    type: "application/json",
   }),
 );
 
@@ -37,10 +48,8 @@ app.use("/api/categories", categoriesRouter);
 // Bookings
 app.use("/api/bookings", bookingRouter);
 
-
-
-
-
+// payment
+app.use("/api/payments", paymentRouter);
 
 app.use(globalErrorHandler);
 

@@ -1,6 +1,6 @@
 model Booking {
 
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   customerId String
 

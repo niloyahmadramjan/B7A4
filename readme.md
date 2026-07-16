@@ -96,3 +96,63 @@ for get the all cetegories
 
 GET http://localhost:5000/api/categories
 
+
+## 💳 Payment APIs
+
+### Create Payment Session
+
+**POST** `/api/payments/create`
+
+Creates a Stripe Checkout session for an accepted booking.
+
+**Authorization:** Bearer Token (Customer)
+
+**Request Body**
+
+```json
+{
+  "bookingId": "cmxxxxxxxxxxxx"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "Payment session created successfully",
+  "data": {
+    "checkoutUrl": "https://checkout.stripe.com/c/pay/..."
+  }
+}
+```
+
+---
+
+### Confirm Payment (Webhook)
+
+**POST** `/api/payments/confirm`
+
+Stripe automatically calls this webhook after a successful payment. It updates the payment status to **COMPLETED** and the booking status to **PAID**.
+
+---
+
+### Get Payment History
+
+**GET** `/api/payments`
+
+Returns all payments of the authenticated user.
+
+**Authorization:** Bearer Token
+
+---
+
+### Get Payment Details
+
+**GET** `/api/payments/:id`
+
+Returns details of a specific payment.
+
+**Authorization:** Bearer Token
+
+
