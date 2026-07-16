@@ -1,18 +1,37 @@
-import { Request, Response } from "express";
-import { CategoryService } from "./category.service";
+import { NextFunction, Request, Response } from "express";
+import httpStatus from "http-status";
+import { categoryService } from "./category.service";
+import { catchAsync } from "../../utils/catchAsynce";
 import { sendResponse } from "../../utils/sentResponse";
-import status from "http-status";
 
-const getAllCategories = async (req: Request, res: Response) => {
-  const result = await CategoryService.getAllCategories();
-  sendResponse(res, {
-    success: true,
-    statusCode: status.OK,
-    message: "Categories retrieved successfully",
-    data: { result },
-  });
-};
+const createCategories = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { name, description } = req.body;
+    const result = await categoryService.createCategories(name, description);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Create ategories successfully",
+      data: result,
+    });
+  },
+);
 
-export const categroiesController = {
+const getAllCategories = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const query = req.query;
+    const result = await categoryService.getAllCategories(query);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Categories retrieved successfully",
+      data: result,
+    });
+  },
+);
+
+export const categoryController = {
+  createCategories,
   getAllCategories,
 };
