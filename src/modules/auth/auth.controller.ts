@@ -20,7 +20,7 @@ const registerUser = catchAsync(async (req: Request, res: Response,next:NextFunc
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
     const { accessToken, refreshToken } = await authService.userLoginInDB(payload)
-    console.log(accessToken,refreshToken)
+    // console.log(accessToken,refreshToken)
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
