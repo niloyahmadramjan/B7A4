@@ -9,11 +9,9 @@ import { technicianRouter } from "./modules/technicians/technicians.route";
 import { categoriesRouter } from "./modules/category/category.route";
 import { bookingRouter } from "./modules/bookings/bookings.route";
 import { paymentRouter } from "./modules/payments/payments.route";
+import { notFound } from "./middleware/notFound";
 
 const app: Application = express();
-
-
-
 
 app.use(
   cors({
@@ -52,5 +50,6 @@ app.use("/api/bookings", bookingRouter);
 app.use("/api/payments", paymentRouter);
 
 app.use(globalErrorHandler);
+app.use(notFound);
 
 export default app;
