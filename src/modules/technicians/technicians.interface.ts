@@ -1,21 +1,39 @@
-import { Prisma } from "../../../generated/prisma/client";
-
 
 export interface ITechnicianQuery {
-  page?: string;
-  limit?: string;
-
-  searchTerm?: string;
+  searchItem?: string;
 
   location?: string;
 
-  minRate?: string;
-  maxRate?: string;
+  minExperience?: string;
+  maxExperience?: string;
+  minPrice?: string;
+  maxPrice?: string;
 
-  minRating?: string;
+  rating?: string;
 
-  isAvailable?: string;
+  category?: string;
 
-  sortBy?: keyof Prisma.TechnicianProfileOrderByWithRelationInput;
-  sortOrder?: Prisma.SortOrder;
+  page?: string;
+  limit?: string;
+
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
+
+
+export interface ITechnicianUpdate {
+  name?: string;
+  bio?: string;
+  experience?: number;
+  location?: string;
+ 
+}
+
+
+
+export interface IAvailabilitySlot {
+  dayOfWeek: number;   
+  startTime: string;  
+  endTime: string;    
+  isAvailable?: boolean;
 }

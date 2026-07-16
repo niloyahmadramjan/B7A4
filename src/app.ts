@@ -10,6 +10,7 @@ import { categoryRouter } from "./modules/category/category.route";
 import { bookingRouter } from "./modules/bookings/bookings.route";
 import { paymentRouter } from "./modules/payments/payments.route";
 import { notFound } from "./middleware/notFound";
+import { reviewRouter } from "./modules/review/review.route";
 
 const app: Application = express();
 
@@ -48,6 +49,9 @@ app.use("/api/bookings", bookingRouter);
 
 // payment
 app.use("/api/payments", paymentRouter);
+
+// review 
+app.use("/api/reviews", reviewRouter)
 
 app.use(globalErrorHandler);
 app.use(notFound);
