@@ -1,29 +1,20 @@
+
+
+
 model User {
-  id            String      @id @default(uuid())
-
-  name          String
-  email         String      @unique
-  phone         String?   
-  password      String
-
-  role          UserRole @default(CUSTOMER)
-  status        UserStatus  @default(ACTIVE)
-
-  avatar        String?
-
-  isVerified    Boolean     @default(false)
-
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  phone     String?
+  role      Role
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   technicianProfile TechnicianProfile?
-
-  customerBookings Booking[] @relation("CustomerBookings")
-  technicianBookings Booking[] @relation("TechnicianBookings")
-
-  reviewsGiven Review[] @relation("CustomerReviews")
-
-  payments Payment[]
+  bookingsAsCustomer Booking[] @relation("CustomerBookings")
+  reviews           Review[]  @relation("CustomerReviews")
 
   @@map("users")
 }
