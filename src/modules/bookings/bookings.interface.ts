@@ -1,15 +1,6 @@
-export interface ICreateBooking {
-
-    serviceId: string;
-
-    bookingDate: Date;
-
-    startTime: string;
-
-    endTime: string;
-
-    address: string;
-
-    notes?: string;
-
+export interface IBooking {
+  serviceId: string;
+  scheduledAt: Date;
+  address: string;
+  notes: string;
 }
