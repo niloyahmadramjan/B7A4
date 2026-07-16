@@ -1,44 +1,31 @@
-import { Prisma } from "../../../generated/prisma/client";
-
-export interface IServiceQuery {
-  page?: string;
-
-  limit?: string;
-
-  searchTerm?: string;
-
-  title?: string;
-
-  categoryId?: string;
-
-  technicianId?: string;
-
-  minPrice?: string;
-
-  maxPrice?: string;
-
-  estimatedHours?: string;
-
-  isActive?: string;
-
-  sortBy?: keyof Prisma.ServiceOrderByWithRelationInput;
-
-  sortOrder?: "asc" | "desc";
+export interface IService {
+  categoryId: string;
+  title: string;
+  description: string;
+  price: number;
+  duration: number;
 }
 
+export interface IServiceUpdated {
+  categoryId?: string;
+  title?: string;
+  description?: string;
+  price?: number;
+  duration?: number;
+}
 
-export interface ICreateService {
+export interface IServiceQuery {
+  searchItem?: string;
+  title?: string;
+  category?: string;
+  location?: string;
+  rating?: string;
+  minPrice?: string;
+  maxPrice?: string;
 
-    technicianId: string;
+  page?: string;
+  limit?: string;
 
-    categoryId: string;
-
-    title: string;
-
-    description: string;
-
-    price: number;
-
-    estimatedHours?: number;
-
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }

@@ -6,7 +6,7 @@ import { authRouter } from "./modules/auth/auth.route";
 import { serviceRouter } from "./modules/services/services.route";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { technicianRouter } from "./modules/technicians/technicians.route";
-import { categoriesRouter } from "./modules/category/category.route";
+import { categoryRouter } from "./modules/category/category.route";
 import { bookingRouter } from "./modules/bookings/bookings.route";
 import { paymentRouter } from "./modules/payments/payments.route";
 import { notFound } from "./middleware/notFound";
@@ -41,7 +41,7 @@ app.use("/api/auth", authRouter);
 //Services & 367Technicians (Public)
 app.use("/api/services", serviceRouter);
 app.use("/api/technicians", technicianRouter);
-app.use("/api/categories", categoriesRouter);
+app.use("/api/categories", categoryRouter);
 
 // Bookings
 app.use("/api/bookings", bookingRouter);

@@ -1,77 +1,47 @@
-/**
-Method	Endpoint	Description
-GET	/api/services	Get all services with filters (type, location, rating)
-
-*/
-
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-import { ICreateService, IServiceQuery } from "./service.interface";
+import { IService, IServiceQuery } from "./service.interface";
 
-const createService = async (payload: ICreateService, id: string) => {
-  const { categoryId, title, description, price, estimatedHours } = payload;
-
-  // check technician exists
-
-  const technician = await prisma.user.findUnique({
-    where: {
-      id: id,
-    },
+const createService = async (payload: IService, technicianId: string) => {
+  const { categoryId, title, description, price, duration } = payload;
+  if (!categoryId || !title || !price || !duration) {
+    throw new Error("All fields are required");
+  }
+  console.log(technicianId);
+  const technician = await prisma.technicianProfile.findUnique({
+    where: { userId: technicianId },
   });
 
   if (!technician) {
-    throw new Error("Technician not found");
+    throw new Error(
+      "Technician profile not found ! pleace create your profile first",
+    );
   }
-
-  // check category exists
-
   const category = await prisma.category.findUnique({
     where: {
       id: categoryId,
     },
   });
-
   if (!category) {
     throw new Error("Category not found");
   }
 
-  const service = await prisma.service.create({
+  const result = await prisma.service.create({
     data: {
-      technicianId: id,
-
+      technicianId: technician.id,
       categoryId,
-
       title,
-
       description,
-
       price,
-
-      estimatedHours,
-    },
-
-    include: {
-      category: true,
-
-      technician: {
-        include: {
-          user: {
-            select: {
-              id: true,
-
-              name: true,
-
-              phone: true,
-            },
-          },
-        },
-      },
+      duration,
     },
   });
-
-  return service;
+  return result;
 };
-const getAllServices = async (query: IServiceQuery) => {
+
+const getAllService = async (query: IServiceQuery) => {
+  console.log("query", query);
+
   const limit = query.limit ? Number(query.limit) : 10;
 
   const page = query.page ? Number(query.page) : 1;
@@ -84,29 +54,32 @@ const getAllServices = async (query: IServiceQuery) => {
 
   const andConditions: Prisma.ServiceWhereInput[] = [];
 
-  // Search title + description
-
-  if (query.searchTerm) {
+  if (query.searchItem) {
     andConditions.push({
       OR: [
         {
           title: {
-            contains: query.searchTerm,
+            contains: query.searchItem,
             mode: "insensitive",
           },
         },
-
+        {
+          category: {
+            name: {
+              contains: query.searchItem,
+              mode: "insensitive",
+            },
+          },
+        },
         {
           description: {
-            contains: query.searchTerm,
+            contains: query.searchItem,
             mode: "insensitive",
           },
         },
       ],
     });
   }
-
-  // exact title filter
 
   if (query.title) {
     andConditions.push({
@@ -117,103 +90,75 @@ const getAllServices = async (query: IServiceQuery) => {
     });
   }
 
-  // category filter
-
-  if (query.categoryId) {
+  if (query.category) {
     andConditions.push({
-      categoryId: query.categoryId,
+      category: {
+        name: {
+          contains: query.category,
+          mode: "insensitive",
+        },
+      },
     });
   }
 
-  // technician filter
-
-  if (query.technicianId) {
+  if (query.location) {
     andConditions.push({
-      technicianId: query.technicianId,
+      technician: {
+        location: {
+          contains: query.location,
+          mode: "insensitive",
+        },
+      },
     });
   }
-
-  // price range
 
   if (query.minPrice || query.maxPrice) {
     andConditions.push({
       price: {
         gte: query.minPrice ? Number(query.minPrice) : undefined,
-
         lte: query.maxPrice ? Number(query.maxPrice) : undefined,
       },
     });
   }
 
-  // estimated hours
-
-  if (query.estimatedHours) {
+  if (query.rating) {
     andConditions.push({
-      estimatedHours: Number(query.estimatedHours),
+      technician: {
+        rating: {
+          gte: Number(query.rating),
+        },
+      },
     });
   }
-
-  // active filter
-
-  if (query.isActive !== undefined) {
-    andConditions.push({
-      isActive: query.isActive === "true",
-    });
-  }
-
-  const whereCondition: Prisma.ServiceWhereInput = {
-    AND: andConditions,
-  };
-
-  const services = await prisma.service.findMany({
-    where: whereCondition,
-
+  const service = await prisma.service.findMany({
+    where: {
+      AND: andConditions,
+    },
     take: limit,
-
-    skip,
-
+    skip: skip,
     orderBy: {
       [sortBy]: sortOrder,
     },
+  });
 
-    include: {
-      category: true,
-
-      technician: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              phone: true,
-              email: true,
-            },
-          },
-        },
-      },
+  const totalServiceCount = await prisma.service.count({
+    where: {
+      AND: andConditions,
     },
   });
 
-  const total = await prisma.service.count({
-    where: whereCondition,
-  });
-
   return {
-    data: services,
-
+    data: service,
     meta: {
-      page,
-
-      limit,
-
-      total,
-
-      totalPages: Math.ceil(total / limit),
+      page: page,
+      limit: limit,
+      total: totalServiceCount,
+      totalPages: Math.ceil(totalServiceCount / limit),
     },
   };
 };
 
-export const servicesService = {
+export const service = {
   createService,
-  getAllServices,
+  getAllService,
 };
