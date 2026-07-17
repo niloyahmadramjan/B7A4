@@ -5,7 +5,7 @@ import { prisma } from "./lib/prisma";
 
 
 async function main() {
-    const PORT = config.port
+    const PORT = config.port;
     try {
         await prisma.$connect()
         app.listen(PORT, () => {
