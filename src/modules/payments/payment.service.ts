@@ -1,7 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/stripe";
 import { PaymentMethod, PaymentStatus } from "../../../generated/prisma/enums";
-import config from "../../config";
+import config from "../../config/index.js";
 import { handelCheckoutCompleted } from "../../utils/paymentHandler";
 
 const createPaymentSession = async (bookingId: string, userId: string) => {

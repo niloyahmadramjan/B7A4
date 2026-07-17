@@ -1,5 +1,5 @@
 import { ref } from "node:process"
-import config from "../../config"
+import config from "../../config/index.js";
 import { prisma } from "../../lib/prisma"
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken"
 import { Role } from "../../../generated/prisma/enums"

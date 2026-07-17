@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDirs": ["./src", "./generated/prisma"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "ES2023",
@@ -16,6 +15,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "generated/prisma/**/*"],
+  // "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
