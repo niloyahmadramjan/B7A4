@@ -65,7 +65,8 @@ const getBookingById = async (bookingId: string) => {
   return booking;
 };
 
-const cancelBooking = async (bookingId: string, customerId: string) => {
+const cancelBooking = async (customerId: string, bookingId: string) => {
+  // console.log("cancel booking id from postman: ", bookingId);
   const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
 
   if (!booking) throw new Error("Booking not found");

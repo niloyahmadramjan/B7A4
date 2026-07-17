@@ -1,12 +1,13 @@
-import Stripe from "stripe";
 import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/stripe";
+import { PaymentMethod, PaymentStatus } from "../../../generated/prisma/enums";
+import config from "../../config";
+import { handelCheckoutCompleted } from "../../utils/paymentHandler";
 
 const createPaymentSession = async (bookingId: string, userId: string) => {
   const booking = await prisma.booking.findFirst({
     where: {
       id: bookingId,
-      customerId: userId,
     },
 
     include: {
@@ -46,7 +47,7 @@ const createPaymentSession = async (bookingId: string, userId: string) => {
             name: booking.service.title,
           },
 
-          unit_amount: Math.round(booking.totalAmount * 100),
+          unit_amount: Math.round(booking.service.price * 100),
         },
 
         quantity: 1,
@@ -55,7 +56,6 @@ const createPaymentSession = async (bookingId: string, userId: string) => {
 
     metadata: {
       bookingId,
-
       userId,
     },
 
@@ -63,24 +63,14 @@ const createPaymentSession = async (bookingId: string, userId: string) => {
 
     cancel_url: `${process.env.FRONTEND_URL}/payment-cancel`,
   });
-
   await prisma.payment.create({
     data: {
       bookingId,
-
-      userId,
-
-      amount: booking.totalAmount,
-
-      provider: "STRIPE",
-
       transactionId: session.id,
-
-      paymentIntentId: (session.payment_intent as string) || null,
-
-      currency: "BDT",
-
-      status: "PENDING",
+      amount: booking.service.price,
+      method: PaymentMethod.STRIPE,
+      provider: "STRIPE",
+      status: PaymentStatus.PENDING,
     },
   });
 
@@ -89,68 +79,35 @@ const createPaymentSession = async (bookingId: string, userId: string) => {
   };
 };
 
-const confirmPayment = async (body: Buffer, signature: string) => {
+const confirmPayment = async (payload: Buffer, signature: string) => {
+  const endPointSecret = config.stripe_webhook_secret as string;
+  console.log(endPointSecret);
   const event = stripe.webhooks.constructEvent(
-    body,
-
+    payload,
     signature,
-
-    process.env.STRIPE_WEBHOOK_SECRET!,
+    endPointSecret,
   );
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
+  switch (event.type) {
+    case "checkout.session.completed":
+      console.log("checkout completed");
 
-    const bookingId = session.metadata?.bookingId;
+      await handelCheckoutCompleted(event.data.object);
+      break;
 
-    if (!bookingId) {
-      throw new Error("Booking ID missing");
-    }
-
-    await prisma.$transaction(async (tx) => {
-      await tx.payment.update({
-        where: {
-          transactionId: session.id,
-        },
-
-        data: {
-          status: "COMPLETED",
-
-          paidAt: new Date(),
-
-          paymentIntentId: session.payment_intent as string,
-
-          method: "CARD",
-        },
-      });
-
-      await tx.booking.update({
-        where: {
-          id: bookingId,
-        },
-
-        data: {
-          status: "PAID",
-        },
-      });
-    });
+    default:
+      console.log(`no event match, unhandled event type ${event.type}`);
+      break;
   }
-
-  return {
-    received: true,
-  };
 };
 
-const getMyPayments = async (userId: string) => {
+const getMyPayments = async (customerId: string) => {
   return prisma.payment.findMany({
     where: {
-      userId,
+      booking: {
+        customerId,
+      },
     },
-
-    orderBy: {
-      createdAt: "desc",
-    },
-
     include: {
       booking: {
         include: {
@@ -161,25 +118,20 @@ const getMyPayments = async (userId: string) => {
   });
 };
 
-const getPaymentById = async (id: string, userId: string) => {
-  const payment = await prisma.payment.findFirst({
+const getPaymentById = async (paymentId: string) => {
+  const payment = await prisma.payment.findFirstOrThrow({
     where: {
-      id,
-      userId,
+      id: paymentId,
     },
-
     include: {
       booking: {
         include: {
           service: true,
+          technician: true,
         },
       },
     },
   });
-
-  if (!payment) {
-    throw new Error("Payment not found");
-  }
 
   return payment;
 };

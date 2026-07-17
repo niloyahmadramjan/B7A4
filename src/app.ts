@@ -11,6 +11,7 @@ import { bookingRouter } from "./modules/bookings/bookings.route";
 import { paymentRouter } from "./modules/payments/payments.route";
 import { notFound } from "./middleware/notFound";
 import { reviewRouter } from "./modules/review/review.route";
+import { adminRouter } from "./modules/admin/admin.route";
 
 const app: Application = express();
 
@@ -40,7 +41,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/technician", technicianRouter);
 app.use("/api/services", serviceRouter);
-// app.use("/api/admin", adminRouter)
+app.use("/api/admin", adminRouter)
 app.use("/api/bookings", bookingRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/reviews", reviewRouter);
