@@ -116,7 +116,7 @@ fixitnow-api/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/niloyahmadramjan/b7-a4
+git clone https://github.com/niloyahmadramjan/B7A4
 cd b7-a4
 
 # 2. Install dependencies
@@ -281,17 +281,16 @@ This applies to validation errors, authentication/authorization failures, not-fo
 ## Admin Access
 
 ```
-Admin Email    : admin@example.com
-Admin Password : ********
-```
+Admin Email    : admin@gmail.com
+Admin Password : admin@gmail.com
 
-> Replace with your actual seeded admin credentials before submission. Do not commit real production credentials to a public repository.
+```
 
 ---
 
 ## Deployment
 
-- **Backend Repo:** https://github.com/niloyahmadramjan/b7-a4
+- **Backend Repo:** https://github.com/niloyahmadramjan/B7A4
 
 - **Hosting:** Vercel (Node.js + PostgreSQL)
 
@@ -303,12 +302,12 @@ Make sure to set all environment variables (`DATABASE_URL`, JWT secrets, Stripe 
 
 | Item | Link |
 |---|---|
-| Backend GitHub Repo | https://github.com/niloyahmadramjan/b7-a4 |
+| Backend GitHub Repo | https://github.com/niloyahmadramjan/B7A4 |
 | Live API | https://fixitnow-b7a4.vercel.app |
 | API Docs (Postman) | https://www.postman.com/niloyahmadramjanteams/l2b7/collection/eei7suc/fixitnow?action=share&source=copy-link&creator=48383402|
 | Demo Video | https://drive.google.com/file/d/xxx/view |
-| Admin Email | admin@example.com |
-| Admin Password | ******** |
+| Admin Email | admin@gmail.com |
+| Admin Password | admin@gmail.com|
 
 ---
 
