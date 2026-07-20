@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "7bb5d444-d005-4457-808f-28021aae8a5d",
+    "_postman_id": "7cfbbf95-77bb-4595-b5d8-7c237a9fccb7",
     "name": "FIXITNOW",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "48383402",
-    "_collection_link": "https://go.postman.co/collection/48383402-7bb5d444-d005-4457-808f-28021aae8a5d?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/48383402-7cfbbf95-77bb-4595-b5d8-7c237a9fccb7?source=collection_link"
   },
   "item": [
     {
@@ -25,9 +25,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/register",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/auth/register",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -53,9 +56,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/auth/login",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -72,9 +78,12 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/auth/refresh-token",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/auth/refresh-token",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -97,9 +106,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/auth/me",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/auth/me",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -130,9 +142,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/services",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/services",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -148,9 +163,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/services",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/services",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -207,9 +225,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/categories?name=test",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/categories?name=test",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -240,9 +261,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/categories",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/categories",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -263,9 +287,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/technician",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/technician",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -304,9 +331,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/technician/8d0fcfbb-158c-43fa-a0fb-eb56fe77aeb5",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/technician/8d0fcfbb-158c-43fa-a0fb-eb56fe77aeb5",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -332,9 +362,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/technician/8d0fcfbb-158c-43fa-a0fb-eb56fe77aeb5",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/technician/8d0fcfbb-158c-43fa-a0fb-eb56fe77aeb5",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -351,9 +384,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/technician/bookings",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/technician/bookings",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -379,9 +415,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/technician/bookings/9a2b1336-1e3a-4ce7-85e5-4b784b276701",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/technician/bookings/9a2b1336-1e3a-4ce7-85e5-4b784b276701",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -408,9 +447,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/technician/availability",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/technician/availability",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -432,9 +474,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/admin/users",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -479,9 +524,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/8d0fcfbb-158c-43fa-a0fb-eb56fe77aeb5",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/admin/users/8d0fcfbb-158c-43fa-a0fb-eb56fe77aeb5",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -499,9 +547,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/bookings",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/admin/bookings",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -530,9 +581,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/categories",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/categories",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -557,9 +611,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/categories",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/categories",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -589,9 +646,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/bookings",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/bookings",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -607,9 +667,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/bookings",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/bookings",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -625,9 +688,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/bookings/9a2b1336-1e3a-4ce7-85e5-4b784b276701",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/bookings/9a2b1336-1e3a-4ce7-85e5-4b784b276701",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -653,9 +719,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/reviews",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/reviews",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -671,9 +740,12 @@
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/bookings/cancel/9a2b1336-1e3a-4ce7-85e5-4b784b276701",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/bookings/cancel/9a2b1336-1e3a-4ce7-85e5-4b784b276701",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -705,9 +777,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/payments/create",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/payments/create",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -724,9 +799,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/payments/6b03dcc2-fd80-4384-8152-ccc8d147e5ca",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/payments/6b03dcc2-fd80-4384-8152-ccc8d147e5ca",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
@@ -743,9 +821,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/payments",
+              "raw": "https://fixitnow-b7a4.vercel.app/api/payments",
+              "protocol": "https",
               "host": [
-                "{{baseUrl}}"
+                "fixitnow-b7a4",
+                "vercel",
+                "app"
               ],
               "path": [
                 "api",
