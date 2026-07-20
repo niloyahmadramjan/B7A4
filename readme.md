@@ -99,7 +99,6 @@ fixitnow-api/
 └── README.md
 ```
 
-> Adjust folder names above to match your actual repo layout if it differs.
 
 ---
 
@@ -148,8 +147,6 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxx
 # Client (if applicable)
 CLIENT_URL=http://localhost:3000
 ```
-
-> Replace all placeholder values with your own credentials. Never commit `.env` to version control.
 
 ### Database Setup
 
@@ -274,7 +271,6 @@ This applies to validation errors, authentication/authorization failures, not-fo
 3. Stripe processes the payment; on success, the booking status is updated to `PAID`.
 4. Payment status and history can be checked via `GET /api/payments/:id` and `GET /api/payments`.
 
-> Cash on delivery / pay-later is **not** supported — all payments are processed through Stripe.
 
 ---
 
