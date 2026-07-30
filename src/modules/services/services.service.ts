@@ -28,7 +28,7 @@ const createService = async (payload: IService, technicianId: string) => {
 
   const result = await prisma.service.create({
     data: {
-      technicianId: technician.id,
+      technicianId: technicianId,
       categoryId,
       title,
       description,
