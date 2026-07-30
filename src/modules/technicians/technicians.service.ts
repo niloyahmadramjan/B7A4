@@ -139,7 +139,7 @@ const getAllTechnicians = async (query: ITechnicianQuery) => {
 const getTechnicianById = async (id: string) => {
   const result = await prisma.technicianProfile.findUniqueOrThrow({
     where: {
-      userId: id,
+      id: id,
     },
     include: {
       services: true,
