@@ -145,7 +145,15 @@ const getTechnicianById = async (id: string) => {
       services: true,
       availability: true,
       reviews: true,
-      user: true,
+      user:{
+   select:{
+     id:true,
+     name:true,
+     email:true,
+     phone:true,
+     role:true
+   }
+ }
     },
   });
 
