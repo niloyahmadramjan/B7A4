@@ -4,75 +4,140 @@ import { PaymentMethod, PaymentStatus } from "../../../generated/prisma/enums";
 import config from "../../config/index.js";
 import { handelCheckoutCompleted } from "../../utils/paymentHandler";
 
-const createPaymentSession = async (bookingId: string, userId: string) => {
+const createPaymentSession = async (
+  bookingId: string,
+  userId: string
+) => {
+
   const booking = await prisma.booking.findFirst({
     where: {
       id: bookingId,
     },
-
     include: {
       service: true,
     },
   });
 
+
   if (!booking) {
     throw new Error("Booking not found");
   }
 
+
   if (booking.status !== "ACCEPTED") {
-    throw new Error("Payment only allowed after technician acceptance");
+    throw new Error(
+      "Payment only allowed after technician acceptance"
+    );
   }
 
-  const existingPayment = await prisma.payment.findUnique({
-    where: {
-      bookingId,
-    },
-  });
 
-  if (existingPayment && existingPayment.status === "COMPLETED") {
-    throw new Error("Payment already completed");
+
+  const existingPayment =
+    await prisma.payment.findUnique({
+      where: {
+        bookingId,
+      },
+    });
+
+
+
+  // Already paid
+  if (
+    existingPayment &&
+    existingPayment.status === "COMPLETED"
+  ) {
+    throw new Error(
+      "Payment already completed"
+    );
   }
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
 
-    mode: "payment",
 
-    line_items: [
-      {
-        price_data: {
-          currency: "bdt",
+  // Payment already created but not completed
+  if (
+    existingPayment &&
+    existingPayment.status === "PENDING"
+  ) {
 
-          product_data: {
-            name: booking.service.title,
+    const oldSession =
+      await stripe.checkout.sessions.retrieve(
+        existingPayment.transactionId
+      );
+
+
+    return {
+      checkoutUrl: oldSession.url,
+    };
+  }
+
+
+
+  const session =
+    await stripe.checkout.sessions.create({
+
+      payment_method_types: [
+        "card",
+      ],
+
+      mode: "payment",
+
+      line_items: [
+        {
+          price_data: {
+            currency: "bdt",
+
+            product_data: {
+              name: booking.service.title,
+            },
+
+            unit_amount:
+              Math.round(
+                booking.service.price * 100
+              ),
           },
 
-          unit_amount: Math.round(booking.service.price * 100),
+          quantity: 1,
         },
+      ],
 
-        quantity: 1,
+
+      metadata: {
+        bookingId,
+        userId,
       },
-    ],
 
-    metadata: {
-      bookingId,
-      userId,
-    },
 
-    success_url: `${process.env.FRONTEND_URL}/payment-success`,
+      success_url:
+        `${process.env.FRONTEND_URL}/payment-success`,
 
-    cancel_url: `${process.env.FRONTEND_URL}/payment-cancel`,
-  });
+      cancel_url:
+        `${process.env.FRONTEND_URL}/payment-cancel`,
+    });
+
+
+
   await prisma.payment.create({
     data: {
+
       bookingId,
+
       transactionId: session.id,
-      amount: booking.service.price,
-      method: PaymentMethod.STRIPE,
-      provider: "STRIPE",
-      status: PaymentStatus.PENDING,
+
+      amount:
+        booking.service.price,
+
+      method:
+        PaymentMethod.STRIPE,
+
+      provider:
+        "STRIPE",
+
+      status:
+        PaymentStatus.PENDING,
     },
   });
+
+
 
   return {
     checkoutUrl: session.url,
