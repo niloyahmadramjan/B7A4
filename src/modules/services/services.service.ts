@@ -7,7 +7,7 @@ const createService = async (payload: IService, technicianId: string) => {
   if (!categoryId || !title || !price || !duration) {
     throw new Error("All fields are required");
   }
-  console.log(technicianId);
+  // console.log(technicianId);
   const technician = await prisma.technicianProfile.findUnique({
     where: { userId: technicianId },
   });
@@ -40,7 +40,7 @@ const createService = async (payload: IService, technicianId: string) => {
 };
 
 const getAllService = async (query: IServiceQuery) => {
-  console.log("query", query);
+  // console.log("query", query);
 
   const limit = query.limit ? Number(query.limit) : 10;
 
@@ -173,13 +173,17 @@ const getMyServices = async (userId: string) => {
 
   return services;
 };
-const updateService = async (serviceId: string, technicianUserId: string, updateData: {
-  title?: string;
-  description?: string;
-  price?: number;
-  duration?: number;
-  categoryId?: string;
-}) => {
+const updateService = async (
+  serviceId: string,
+  technicianUserId: string,
+  updateData: {
+    title?: string;
+    description?: string;
+    price?: number;
+    duration?: number;
+    categoryId?: string;
+  },
+) => {
   // Ensure the technician owns this service profile
   const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
     where: { userId: technicianUserId },
@@ -228,5 +232,4 @@ export const service = {
   getMyServices,
   updateService,
   deleteService,
-  
 };

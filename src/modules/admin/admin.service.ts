@@ -113,7 +113,7 @@ const getAllUser = async (query: IUser) => {
 };
 
 const updateUser = async (id: string, payload: IUpdateUser) => {
-  console.log("djlflf Id", id);
+  // console.log("djlflf Id", id);
   const existingUser = await prisma.user.findUnique({
     where: {
       id,
@@ -338,21 +338,15 @@ const getAdminOverview = async (id: string) => {
     prisma.booking.count({
       where: {
         createdAt: {
-          gte: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth(),
-            1
-          ),
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
         },
       },
     }),
   ]);
 
-
   if (!admin) {
     throw new Error("Admin not found");
   }
-
 
   const statusSummary = {
     PENDING: 0,
@@ -363,14 +357,12 @@ const getAdminOverview = async (id: string) => {
     CANCELLED: 0,
   };
 
-
   bookingStatus.forEach((item) => {
     if (item.status in statusSummary) {
       statusSummary[item.status as keyof typeof statusSummary] =
         item._count.status;
     }
   });
-
 
   return {
     admin: {
@@ -410,10 +402,9 @@ const getAdminOverview = async (id: string) => {
   };
 };
 
-
 export const adminService = {
   getAllUser,
   updateUser,
   getAllBookings,
-  getAdminOverview
+  getAdminOverview,
 };

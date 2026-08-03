@@ -9,7 +9,7 @@ const giveReviewOnTechnician = catchAsync(
     const userId = req.user?.id;
     const { comment, rating, bookingId } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
     const result = await reviewService.giveReviewOnTechnician(
       userId as string,
       bookingId as string,

@@ -33,7 +33,7 @@ const getMyBookings = async (customerId: string) => {
       customerId,
     },
     orderBy: {
-      createdAt: 'desc', 
+      createdAt: "desc",
     },
 
     include: {
@@ -53,7 +53,7 @@ const getMyBookings = async (customerId: string) => {
 const getBookingById = async (bookingId: string) => {
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    
+
     include: {
       technician: {
         include: {
@@ -70,7 +70,7 @@ const getBookingById = async (bookingId: string) => {
 };
 
 const cancelBooking = async (customerId: string, bookingId: string) => {
-  // console.log("cancel booking id from postman: ", bookingId);
+  // // console.log("cancel booking id from postman: ", bookingId);
   const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
 
   if (!booking) throw new Error("Booking not found");

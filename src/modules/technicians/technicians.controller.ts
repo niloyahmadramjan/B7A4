@@ -32,7 +32,7 @@ const getTechnicianById = catchAsync(
 const getMyProfileInfo = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.user?.id;
-    console.log(id, "from user get profile info")
+    // console.log(id, "from user get profile info")
     const result = await technicianService.getMyProfile(id as string);
     sendResponse(res, {
       success: true,
@@ -40,7 +40,7 @@ const getMyProfileInfo = catchAsync(
       message: "My profile fetched successfully",
       data: result,
     });
-  }
+  },
 );
 
 const updateTechnicianProfile = catchAsync(
@@ -125,7 +125,7 @@ const getTechnicianDashboardOverview = catchAsync(
       data: result,
     });
   },
-);  
+);
 
 export const technicianController = {
   getAllTechnicians,
@@ -135,5 +135,5 @@ export const technicianController = {
   updateBookingStatus,
   updateAvailability,
   getMyProfileInfo,
-  getTechnicianDashboardOverview
+  getTechnicianDashboardOverview,
 };

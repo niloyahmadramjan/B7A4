@@ -20,7 +20,7 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
 const confirmPayment = catchAsync(async (req: Request, res: Response) => {
   const signature = req.headers["stripe-signature"] as string;
   const payload = req.body;
-  console.log(signature, payload);
+  // console.log(signature, payload);
 
   await PaymentService.confirmPayment(payload, signature);
 

@@ -4,11 +4,7 @@ import { PaymentMethod, PaymentStatus } from "../../../generated/prisma/enums";
 import config from "../../config/index.js";
 import { handelCheckoutCompleted } from "../../utils/paymentHandler";
 
-const createPaymentSession = async (
-  bookingId: string,
-  userId: string
-) => {
-
+const createPaymentSession = async (bookingId: string, userId: string) => {
   const booking = await prisma.booking.findFirst({
     where: {
       id: bookingId,
@@ -18,126 +14,82 @@ const createPaymentSession = async (
     },
   });
 
-
   if (!booking) {
     throw new Error("Booking not found");
   }
 
-
   if (booking.status !== "ACCEPTED") {
-    throw new Error(
-      "Payment only allowed after technician acceptance"
-    );
+    throw new Error("Payment only allowed after technician acceptance");
   }
 
-
-
-  const existingPayment =
-    await prisma.payment.findUnique({
-      where: {
-        bookingId,
-      },
-    });
-
-
+  const existingPayment = await prisma.payment.findUnique({
+    where: {
+      bookingId,
+    },
+  });
 
   // Already paid
-  if (
-    existingPayment &&
-    existingPayment.status === "COMPLETED"
-  ) {
-    throw new Error(
-      "Payment already completed"
-    );
+  if (existingPayment && existingPayment.status === "COMPLETED") {
+    throw new Error("Payment already completed");
   }
 
-
-
   // Payment already created but not completed
-  if (
-    existingPayment &&
-    existingPayment.status === "PENDING"
-  ) {
-
-    const oldSession =
-      await stripe.checkout.sessions.retrieve(
-        existingPayment.transactionId
-      );
-
+  if (existingPayment && existingPayment.status === "PENDING") {
+    const oldSession = await stripe.checkout.sessions.retrieve(
+      existingPayment.transactionId,
+    );
 
     return {
       checkoutUrl: oldSession.url,
     };
   }
 
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
 
+    mode: "payment",
 
-  const session =
-    await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: "bdt",
 
-      payment_method_types: [
-        "card",
-      ],
-
-      mode: "payment",
-
-      line_items: [
-        {
-          price_data: {
-            currency: "bdt",
-
-            product_data: {
-              name: booking.service.title,
-            },
-
-            unit_amount:
-              Math.round(
-                booking.service.price * 100
-              ),
+          product_data: {
+            name: booking.service.title,
           },
 
-          quantity: 1,
+          unit_amount: Math.round(booking.service.price * 100),
         },
-      ],
 
-
-      metadata: {
-        bookingId,
-        userId,
+        quantity: 1,
       },
+    ],
 
+    metadata: {
+      bookingId,
+      userId,
+    },
 
-      success_url:
-        `${config.frontend_url}/payment-success`,
+    success_url: `${config.frontend_url}/payment-success`,
 
-      cancel_url:
-        `${config.frontend_url}/payment-cancel`,
-    });
-
-
+    cancel_url: `${config.frontend_url}/payment-cancel`,
+  });
 
   await prisma.payment.create({
     data: {
-
       bookingId,
 
       transactionId: session.id,
 
-      amount:
-        booking.service.price,
+      amount: booking.service.price,
 
-      method:
-        PaymentMethod.STRIPE,
+      method: PaymentMethod.STRIPE,
 
-      provider:
-        "STRIPE",
+      provider: "STRIPE",
 
-      status:
-        PaymentStatus.PENDING,
+      status: PaymentStatus.PENDING,
     },
   });
-
-
 
   return {
     checkoutUrl: session.url,
@@ -146,7 +98,7 @@ const createPaymentSession = async (
 
 const confirmPayment = async (payload: Buffer, signature: string) => {
   const endPointSecret = config.stripe_webhook_secret as string;
-  console.log(endPointSecret);
+  // console.log(endPointSecret);
   const event = stripe.webhooks.constructEvent(
     payload,
     signature,
@@ -155,13 +107,13 @@ const confirmPayment = async (payload: Buffer, signature: string) => {
 
   switch (event.type) {
     case "checkout.session.completed":
-      console.log("checkout completed");
+      // console.log("checkout completed");
 
       await handelCheckoutCompleted(event.data.object);
       break;
 
     default:
-      console.log(`no event match, unhandled event type ${event.type}`);
+      // console.log(`no event match, unhandled event type ${event.type}`);
       break;
   }
 };

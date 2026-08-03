@@ -161,13 +161,13 @@ const getTechnicianById = async (id: string) => {
 };
 
 const getMyProfile = async (id: string) => {
-  console.log("User ID:", id);
+  // console.log("User ID:", id);
 
   const user = await prisma.user.findUnique({
     where: { id },
   });
 
-  console.log(user);
+  // console.log(user);
 
   const result = await prisma.user.findUniqueOrThrow({
     where: { id },
@@ -246,11 +246,14 @@ const updateTechnicianProfile = async (
   return result;
 };
 
-const getTechnicianBooking = async (tecId: string, query: Record<string, any>) => {
+const getTechnicianBooking = async (
+  tecId: string,
+  query: Record<string, any>,
+) => {
   const technicianProfile = await prisma.technicianProfile.findUnique({
     where: { userId: tecId },
   });
-  
+
   if (!technicianProfile) {
     throw new Error("Not Found technician Profile");
   }
@@ -265,7 +268,7 @@ const getTechnicianBooking = async (tecId: string, query: Record<string, any>) =
       where: { technicianId: technicianProfile.id },
       skip,
       take: limit,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         customer: {
           omit: { password: true },

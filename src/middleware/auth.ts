@@ -26,7 +26,7 @@ export const auth = (...requiredRoles: Role[]) => {
       : req.headers.authorization?.startsWith("Bearer ")
         ? req.headers.authorization?.split(" ")[1]
         : req.headers.authorization;
-    console.log(token)
+    // console.log(token)
     if (!token) {
       throw new Error(
         "you are not logged in , Please log in to access this resource.",
@@ -54,7 +54,7 @@ export const auth = (...requiredRoles: Role[]) => {
     if (!user) {
       throw new Error("User not found. Please log in again");
     }
-    console.log(email, name, id, role, "user decoded data");
+    // console.log(email, name, id, role, "user decoded data");
 
     req.user = {
       email,
