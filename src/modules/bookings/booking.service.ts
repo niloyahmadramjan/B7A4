@@ -32,6 +32,9 @@ const getMyBookings = async (customerId: string) => {
     where: {
       customerId,
     },
+    orderBy: {
+      createdAt: 'desc', 
+    },
 
     include: {
       service: {
