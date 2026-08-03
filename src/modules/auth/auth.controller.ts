@@ -76,10 +76,22 @@ const getCurrentUser = catchAsync(async (req:Request, res:Response, next: NextFu
     })
 })
 
+const getDashboardInfo = catchAsync(async (req:Request, res:Response, next: NextFunction) => {
+    const userId = req.user?.id
+   
+    const result = await authService.getCurrentLoginUser(userId as string)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "User profile fetched successfully",
+        data:result
+    })
+})
+
 export const authController = {
     registerUser,  
     loginUser,
     refreshToken,
-    getCurrentUser
-    
+    getCurrentUser,
+    getDashboardInfo
 }
