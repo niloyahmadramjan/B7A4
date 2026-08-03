@@ -122,11 +122,12 @@ const getCurrentLoginUser = async (userId: string) => {
         where: {
             id: userId
         },
-        include: {
-            technicianProfile: true,
-            bookingsAsCustomer: true,
-            reviews: true
-        }
+        
+        // include: {
+        //     technicianProfile: true,
+        //     bookingsAsCustomer: true,
+        //     reviews: true
+        // }
 
     })
     if (user.role === Role.TECHNICIAN) {
@@ -134,8 +135,8 @@ const getCurrentLoginUser = async (userId: string) => {
 
     }
 
-    const { technicianProfile, ...rest } = user;
-    return rest;
+    // const { technicianProfile, ...rest } = user;
+    return user;
 
 }
 export const authService = {

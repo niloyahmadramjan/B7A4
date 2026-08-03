@@ -53,6 +53,7 @@ const getMyBookings = async (customerId: string) => {
 const getBookingById = async (bookingId: string) => {
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
+    
     include: {
       technician: {
         include: {
