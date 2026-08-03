@@ -158,7 +158,75 @@ const getAllService = async (query: IServiceQuery) => {
   };
 };
 
+const getMyServices = async (userId: string) => {
+  const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const services = await prisma.service.findMany({
+    where: {
+      technicianId: technicianProfile.id,
+    },
+  });
+
+  return services;
+};
+const updateService = async (serviceId: string, technicianUserId: string, updateData: {
+  title?: string;
+  description?: string;
+  price?: number;
+  duration?: number;
+  categoryId?: string;
+}) => {
+  // Ensure the technician owns this service profile
+  const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
+    where: { userId: technicianUserId },
+  });
+
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+  });
+
+  if (!service || service.technicianId !== technicianProfile.id) {
+    throw new Error("Service not found or unauthorized");
+  }
+
+  const updatedService = await prisma.service.update({
+    where: { id: serviceId },
+    data: updateData,
+  });
+
+  return updatedService;
+};
+
+const deleteService = async (serviceId: string, technicianUserId: string) => {
+  // Ensure the technician owns this service profile
+  const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
+    where: { userId: technicianUserId },
+  });
+
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+  });
+
+  if (!service || service.technicianId !== technicianProfile.id) {
+    throw new Error("Service not found or unauthorized");
+  }
+
+  await prisma.service.delete({
+    where: { id: serviceId },
+  });
+
+  return { message: "Service deleted successfully" };
+};
+
 export const service = {
   createService,
   getAllService,
+  getMyServices,
+  updateService,
+  deleteService,
+  
 };
