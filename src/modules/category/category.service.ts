@@ -109,7 +109,48 @@ const getAllCategories = async (query: ICategory) => {
   };
 };
 
+const deleteCategory = async (categoryId: string) => {
+  const existingCategory = await prisma.category.findUnique({
+    where: { id: categoryId },
+  });
+
+  if (!existingCategory) {
+    throw new Error("Category not found");
+  }
+
+  await prisma.category.delete({
+    where: { id: categoryId },
+  });
+
+  return { message: "Category deleted successfully" };
+};
+
+const updateCategory = async (categoryId: string,
+  name: string,
+  description: string,
+) => {
+  const existingCategory = await prisma.category.findUnique({
+    where: { id: categoryId },
+  });
+
+  if (!existingCategory) {
+    throw new Error("Category not found");
+  }
+
+  const updatedCategory = await prisma.category.update({
+    where: { id: categoryId },
+    data: {
+      name,
+      description,
+    },
+  });
+
+  return updatedCategory;
+}
+
 export const categoryService = {
   createCategories,
   getAllCategories,
+  deleteCategory,
+  updateCategory
 };

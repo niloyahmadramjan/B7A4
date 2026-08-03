@@ -39,8 +39,21 @@ const getAllBookings = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+const getAdminOverview = catchAsync(async (req: Request, res: Response) => {
+  const id = req.user?.id as string;
+  const result = await adminService.getAdminOverview(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: statusCode.OK,
+    message: "Admin overview retrieved successfully",
+    data: result,
+  });
+});
+
 export const adminController = {
   getAllUser,
   updateUser,
   getAllBookings,
+  getAdminOverview,
 };

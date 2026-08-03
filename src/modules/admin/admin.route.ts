@@ -7,5 +7,6 @@ const router = Router();
 router.get("/users", auth(Role.ADMIN), adminController.getAllUser);
 router.put("/users/:id", auth(Role.ADMIN), adminController.updateUser);
 router.get("/bookings", auth(Role.ADMIN), adminController.getAllBookings);
+router.get("/overview", auth(Role.ADMIN), adminController.getAdminOverview);
 
 export const adminRouter = router;

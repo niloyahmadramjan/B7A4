@@ -140,28 +140,27 @@ const updateUser = async (id: string, payload: IUpdateUser) => {
   return result;
 };
 
-const getAllBookings = async (query: IBookingQuery) => {
+const getAllBookings = async (query: IBookingQuery | any) => {
   const limit = query.limit ? Number(query.limit) : 10;
   const page = query.page ? Number(query.page) : 1;
   const skip = (page - 1) * limit;
 
   const allowedSortFields = ["scheduledAt", "createdAt", "status"] as const;
-
-  const sortBy = allowedSortFields.includes(query.sortBy as any)
+  const sortBy = allowedSortFields.includes(query.sortBy)
     ? query.sortBy
     : "createdAt";
-
-  const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+  const sortOrder = query.sortOrder === "asc" ? "asc" : "desc";
 
   const andConditions: Prisma.BookingWhereInput[] = [];
 
-  if (query.searchItem) {
+  // Search by Customer Name or Email
+  if (query.name) {
     andConditions.push({
       OR: [
         {
           customer: {
             name: {
-              contains: query.searchItem,
+              contains: query.name,
               mode: "insensitive",
             },
           },
@@ -169,7 +168,7 @@ const getAllBookings = async (query: IBookingQuery) => {
         {
           customer: {
             email: {
-              contains: query.searchItem,
+              contains: query.name,
               mode: "insensitive",
             },
           },
@@ -178,10 +177,31 @@ const getAllBookings = async (query: IBookingQuery) => {
     });
   }
 
+  // Date Filter Support
+  if (query.date) {
+    const startOfDay = new Date(query.date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(query.date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    andConditions.push({
+      scheduledAt: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    });
+  }
+
+  // FIXED: Status Filter with uppercase safety conversion
   if (query.status) {
+    const statuses = query.status
+      .split(",")
+      .map((s: string) => s.trim().toUpperCase() as BookingStatus);
+
     andConditions.push({
       status: {
-        in: query.status.split(",").map((s) => s.trim() as BookingStatus),
+        in: statuses,
       },
     });
   }
@@ -194,7 +214,7 @@ const getAllBookings = async (query: IBookingQuery) => {
 
   const result = await prisma.booking.findMany({
     where: {
-      AND: andConditions,
+      AND: andConditions.length > 0 ? andConditions : undefined,
     },
     include: {
       customer: {
@@ -217,12 +237,12 @@ const getAllBookings = async (query: IBookingQuery) => {
     skip,
     take: limit,
     orderBy: {
-      [sortBy as string]: sortOrder,
+      [sortBy]: sortOrder,
     },
   });
 
   const totalBookings = await prisma.booking.count({
-    where: { AND: andConditions },
+    where: { AND: andConditions.length > 0 ? andConditions : undefined },
   });
 
   return {
@@ -236,8 +256,164 @@ const getAllBookings = async (query: IBookingQuery) => {
   };
 };
 
+const getAdminOverview = async (id: string) => {
+  const [
+    admin,
+    totalUsers,
+    totalCustomers,
+    totalTechnicians,
+    totalBookings,
+    bookingStatus,
+    revenue,
+    todayBookings,
+    thisMonthBookings,
+  ] = await Promise.all([
+    // Admin information
+    prisma.user.findUnique({
+      where: {
+        id,
+        role: Role.ADMIN,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+
+    // Total users
+    prisma.user.count(),
+
+    // Total customers
+    prisma.user.count({
+      where: {
+        role: Role.CUSTOMER,
+      },
+    }),
+
+    // Total technicians
+    prisma.user.count({
+      where: {
+        role: Role.TECHNICIAN,
+      },
+    }),
+
+    // Total bookings
+    prisma.booking.count(),
+
+    // Booking status summary
+    prisma.booking.groupBy({
+      by: ["status"],
+      _count: {
+        status: true,
+      },
+    }),
+
+    // Total revenue
+    prisma.payment.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        status: "COMPLETED",
+      },
+    }),
+
+    // Today bookings
+    prisma.booking.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setHours(0, 0, 0, 0)),
+          lte: new Date(new Date().setHours(23, 59, 59, 999)),
+        },
+      },
+    }),
+
+    // Current month bookings
+    prisma.booking.count({
+      where: {
+        createdAt: {
+          gte: new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            1
+          ),
+        },
+      },
+    }),
+  ]);
+
+
+  if (!admin) {
+    throw new Error("Admin not found");
+  }
+
+
+  const statusSummary = {
+    PENDING: 0,
+    PAID: 0,
+    ACCEPTED: 0,
+    IN_PROGRESS: 0,
+    COMPLETED: 0,
+    CANCELLED: 0,
+  };
+
+
+  bookingStatus.forEach((item) => {
+    if (item.status in statusSummary) {
+      statusSummary[item.status as keyof typeof statusSummary] =
+        item._count.status;
+    }
+  });
+
+
+  return {
+    admin: {
+      id: admin.id,
+      name: admin.name,
+      email: admin.email,
+      phone: admin.phone,
+      role: admin.role,
+      status: admin.status,
+      joinedAt: admin.createdAt,
+      updatedAt: admin.updatedAt,
+    },
+
+    overview: {
+      users: {
+        total: totalUsers,
+        customers: totalCustomers,
+        technicians: totalTechnicians,
+      },
+
+      bookings: {
+        total: totalBookings,
+        today: todayBookings,
+        thisMonth: thisMonthBookings,
+        pending: statusSummary.PENDING,
+        paid: statusSummary.PAID,
+        accepted: statusSummary.ACCEPTED,
+        inProgress: statusSummary.IN_PROGRESS,
+        completed: statusSummary.COMPLETED,
+        cancelled: statusSummary.CANCELLED,
+      },
+
+      revenue: {
+        total: revenue._sum.amount || 0,
+      },
+    },
+  };
+};
+
+
 export const adminService = {
   getAllUser,
   updateUser,
   getAllBookings,
+  getAdminOverview
 };
