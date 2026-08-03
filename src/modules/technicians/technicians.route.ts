@@ -18,7 +18,7 @@ router.put(
   technicianController.updateAvailability,
 );
 
-router.get("/:id", technicianController.getTechnicianById);
+router.get("/info/:id", technicianController.getTechnicianById);
 router.put(
   "/:id",
   auth(Role.TECHNICIAN),
@@ -29,6 +29,11 @@ router.patch(
   "/bookings/:id",
   auth(Role.TECHNICIAN),
   technicianController.updateBookingStatus,
+);
+router.get(
+  "/my-profile",
+  auth(Role.TECHNICIAN),
+  technicianController.getMyProfileInfo,
 );
 
 export const technicianRouter = router;

@@ -29,9 +29,23 @@ const getTechnicianById = catchAsync(
   },
 );
 
+const getMyProfileInfo = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.user?.id;
+    console.log(id, "from user get profile info")
+    const result = await technicianService.getMyProfile(id as string);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "My profile fetched successfully",
+      data: result,
+    });
+  }
+);
+
 const updateTechnicianProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const id = req.user?.id;
     const updateData = req.body;
     const result = await technicianService.updateTechnicianProfile(
       id as string,
@@ -107,4 +121,5 @@ export const technicianController = {
   getTechnicianBooking,
   updateBookingStatus,
   updateAvailability,
+  getMyProfileInfo
 };

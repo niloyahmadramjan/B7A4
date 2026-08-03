@@ -145,20 +145,46 @@ const getTechnicianById = async (id: string) => {
       services: true,
       availability: true,
       reviews: true,
-      user:{
-   select:{
-     id:true,
-     name:true,
-     email:true,
-     phone:true,
-     role:true
-   }
- }
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          role: true,
+        },
+      },
     },
   });
 
   return result;
 };
+
+const getMyProfile = async (id: string) => {
+  console.log("User ID:", id);
+
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  console.log(user);
+
+  const result = await prisma.user.findUniqueOrThrow({
+    where: { id },
+    include: {
+      technicianProfile: {
+        include: {
+          services: true,
+          availability: true,
+          reviews: true,
+        },
+      },
+    },
+  });
+
+  return result;
+};
+
 
 const updateTechnicianProfile = async (
   id: string,
@@ -341,4 +367,5 @@ export const technicianService = {
   getTechnicianBooking,
   updateTechnicianBookingStatus,
   updateAvailability,
+  getMyProfile,
 };
