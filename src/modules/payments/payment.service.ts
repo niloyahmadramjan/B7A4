@@ -108,10 +108,10 @@ const createPaymentSession = async (
 
 
       success_url:
-        `${process.env.FRONTEND_URL}/payment-success`,
+        `${config.frontend_url}/payment-success`,
 
       cancel_url:
-        `${process.env.FRONTEND_URL}/payment-cancel`,
+        `${config.frontend_url}/payment-cancel`,
     });
 
 
