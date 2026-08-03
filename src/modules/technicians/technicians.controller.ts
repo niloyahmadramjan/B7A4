@@ -60,24 +60,22 @@ const updateTechnicianProfile = catchAsync(
   },
 );
 
-const getTechnicianBooking = catchAsync(
+const getTechnicianBookings = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const technicId = req.user?.id;
-
+    const userId = req.user?.id;
     const result = await technicianService.getTechnicianBooking(
-      technicId as string,
+      userId as string,
+      req.query,
     );
-    console.log(result);
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Booking data retrive successfully ",
-      data: result,
+      message: "Technician bookings fetched successfully",
+      meta: result.meta,
+      data: result.data,
     });
   },
 );
-
-// technician.controller.ts
 
 const updateBookingStatus = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.id;
@@ -114,12 +112,28 @@ const updateAvailability = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getTechnicianDashboardOverview = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const result = await technicianService.getTechnicianDashboardOverview(
+      userId as string,
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Technician dashboard overview fetched successfully",
+      data: result,
+    });
+  },
+);  
+
 export const technicianController = {
   getAllTechnicians,
   getTechnicianById,
   updateTechnicianProfile,
-  getTechnicianBooking,
+  getTechnicianBookings,
   updateBookingStatus,
   updateAvailability,
-  getMyProfileInfo
+  getMyProfileInfo,
+  getTechnicianDashboardOverview
 };

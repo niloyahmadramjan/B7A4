@@ -185,7 +185,6 @@ const getMyProfile = async (id: string) => {
   return result;
 };
 
-
 const updateTechnicianProfile = async (
   id: string,
   updateData: ITechnicianUpdate,
@@ -247,33 +246,51 @@ const updateTechnicianProfile = async (
   return result;
 };
 
-const getTechnicianBooking = async (tecId: string) => {
+const getTechnicianBooking = async (tecId: string, query: Record<string, any>) => {
   const technicianProfile = await prisma.technicianProfile.findUnique({
-    where: {
-      userId: tecId,
-    },
+    where: { userId: tecId },
   });
+  
   if (!technicianProfile) {
     throw new Error("Not Found technician Profile");
   }
 
-  const result = await prisma.booking.findMany({
-    where: {
-      technicianId: technicianProfile.id,
-    },
-    include: {
-      customer: {
-        omit: {
-          password: true,
+  const page = Number(query.page) || 1;
+  const limit = Number(query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  // Fetch paginated bookings and total count concurrently
+  const [result, total] = await Promise.all([
+    prisma.booking.findMany({
+      where: { technicianId: technicianProfile.id },
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        customer: {
+          omit: { password: true },
         },
+        review: true,
+        payment: true,
+        service: true,
       },
-      review: true,
-      payment: true,
-      service: true,
+    }),
+    prisma.booking.count({
+      where: { technicianId: technicianProfile.id },
+    }),
+  ]);
+
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPage,
     },
-  });
-  console.log(result);
-  return result;
+    data: result,
+  };
 };
 
 const updateTechnicianBookingStatus = async (
@@ -360,6 +377,167 @@ const updateAvailability = async (
   return result;
 };
 
+const getTechnicianDashboardOverview = async (userId: string) => {
+  const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
+    },
+  });
+
+  const startOfMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  );
+
+  const [
+    totalServices,
+    totalBookings,
+    pendingBookings,
+    completedBookings,
+    totalReviews,
+    upcomingBookingsCount,
+    revenueData,
+    monthRevenueData,
+  ] = await Promise.all([
+    // total services
+    prisma.service.count({
+      where: {
+        technicianId: technicianProfile.id,
+      },
+    }),
+
+    // total bookings
+    prisma.booking.count({
+      where: {
+        technicianId: technicianProfile.id,
+      },
+    }),
+
+    // pending bookings
+    prisma.booking.count({
+      where: {
+        technicianId: technicianProfile.id,
+        status: BookingStatus.REQUESTED,
+      },
+    }),
+
+    // completed bookings
+    prisma.booking.count({
+      where: {
+        technicianId: technicianProfile.id,
+        status: BookingStatus.COMPLETED,
+      },
+    }),
+
+    // reviews
+    prisma.review.count({
+      where: {
+        technicianId: technicianProfile.id,
+      },
+    }),
+
+    // upcoming count
+    prisma.booking.count({
+      where: {
+        technicianId: technicianProfile.id,
+        status: {
+          in: [
+            BookingStatus.REQUESTED,
+            BookingStatus.ACCEPTED,
+            BookingStatus.PAID,
+            BookingStatus.IN_PROGRESS,
+          ],
+        },
+        scheduledAt: {
+          gte: new Date(),
+        },
+      },
+    }),
+
+    // total revenue
+    prisma.booking.findMany({
+      where: {
+        technicianId: technicianProfile.id,
+        status: BookingStatus.COMPLETED,
+      },
+      select: {
+        service: {
+          select: {
+            price: true,
+          },
+        },
+      },
+    }),
+
+    // current month revenue
+    prisma.booking.findMany({
+      where: {
+        technicianId: technicianProfile.id,
+        status: BookingStatus.COMPLETED,
+        updatedAt: {
+          gte: startOfMonth,
+        },
+      },
+      select: {
+        service: {
+          select: {
+            price: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  const totalRevenue = revenueData.reduce(
+    (sum, booking) => sum + booking.service.price,
+    0,
+  );
+
+  const monthlyRevenue = monthRevenueData.reduce(
+    (sum, booking) => sum + booking.service.price,
+    0,
+  );
+
+  return {
+    profile: {
+      id: technicianProfile.id,
+      name: technicianProfile.user.name,
+      email: technicianProfile.user.email,
+      phone: technicianProfile.user.phone,
+      bio: technicianProfile.bio,
+      location: technicianProfile.location,
+      experience: technicianProfile.experience,
+      rating: technicianProfile.rating,
+      totalReviews: technicianProfile.totalReviews,
+    },
+
+    overview: {
+      totalServices,
+      totalBookings,
+      pendingBookings,
+      completedBookings,
+      totalReviews,
+      upcomingBookings: upcomingBookingsCount,
+
+      revenue: {
+        total: totalRevenue,
+        currentMonth: monthlyRevenue,
+      },
+    },
+  };
+};
+
 export const technicianService = {
   getAllTechnicians,
   getTechnicianById,
@@ -368,4 +546,5 @@ export const technicianService = {
   updateTechnicianBookingStatus,
   updateAvailability,
   getMyProfile,
+  getTechnicianDashboardOverview,
 };

@@ -8,7 +8,7 @@ const router = Router();
 router.get(
   "/bookings",
   auth(Role.TECHNICIAN),
-  technicianController.getTechnicianBooking,
+  technicianController.getTechnicianBookings,
 );
 router.get("/", technicianController.getAllTechnicians);
 
@@ -34,6 +34,11 @@ router.get(
   "/my-profile",
   auth(Role.TECHNICIAN),
   technicianController.getMyProfileInfo,
+);
+router.get(
+  "/dashboard-overview",
+  auth(Role.TECHNICIAN),
+  technicianController.getTechnicianDashboardOverview,
 );
 
 export const technicianRouter = router;
